@@ -1,6 +1,4 @@
 
-// --- server.js with PostgreSQL support ---
-
 const express = require("express");
 const { Pool } = require("pg");
 const path = require("path");
@@ -24,7 +22,7 @@ const pool = new Pool({
       name TEXT NOT NULL,
       location TEXT NOT NULL,
       start DATE NOT NULL,
-      end DATE NOT NULL
+      "end" DATE NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS bookings (
@@ -56,7 +54,7 @@ app.post("/api/events", async (req, res) => {
   const { name, location, start, end } = req.body;
   const id = Date.now();
   await pool.query(
-    "INSERT INTO events (id, name, location, start, end) VALUES ($1, $2, $3, $4, $5)",
+    "INSERT INTO events (id, name, location, start, "end") VALUES ($1, $2, $3, $4, $5)",
     [id, name, location, start, end]
   );
   res.json({ id, name, location, start, end });
@@ -67,7 +65,7 @@ app.put("/api/events/:id", async (req, res) => {
   const { name, location, start, end } = req.body;
   const id = parseInt(req.params.id);
   await pool.query(
-    "UPDATE events SET name=$1, location=$2, start=$3, end=$4 WHERE id=$5",
+    "UPDATE events SET name=$1, location=$2, start=$3, "end"=$4 WHERE id=$5",
     [name, location, start, end, id]
   );
   res.json({ success: true });
