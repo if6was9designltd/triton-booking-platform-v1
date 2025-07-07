@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Edit Event</title>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-[#323E48] font-sans">
+<header class="bg-white shadow p-4">
+<div class="max-w-6xl mx-auto flex items-center gap-4">
+<img alt="Triton Logo" class="h-10" src="logo.png"/>
+<h1 class="text-2xl font-bold">Edit Event</h1>
+<div class="ml-auto"><a class="text-[#CF6528] hover:text-[#954B2D] text-sm" href="index.html">← Back to Events</a></div></div>
+</header>
+<main class="p-6 max-w-3xl mx-auto bg-white rounded shadow mt-6">
+<h2 class="text-xl font-semibold mb-4">Update Event Details</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<input class="border p-2 rounded" id="eventName" placeholder="Event Name"/>
+<input class="border p-2 rounded" id="eventLocation" placeholder="Location"/>
+<input class="border p-2 rounded" id="startDate" type="date"/>
+<input class="border p-2 rounded" id="endDate" type="date"/>
+</div>
+<div class="text-right mt-6">
+<button class="bg-[#CF6528] text-white px-4 py-2 rounded hover:bg-[#954B2D]" onclick="saveEvent()">Save Changes</button>
+</div>
+</main>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const eventId = params.get("eventId");
+  const events = JSON.parse(localStorage.getItem("events")) || [];
+  const event = events.find(ev => ev.id == eventId);
+
+  if (event) {
+    document.getElementById("eventName").value = event.name;
+    document.getElementById("eventLocation").value = event.location;
+    document.getElementById("startDate").value = event.start;
+    document.getElementById("endDate").value = event.end;
+  }
+
+  function saveEvent() {
+    const idx = events.findIndex(ev => ev.id == eventId);
+    if (idx >= 0) {
+      events[idx].name = document.getElementById("eventName").value;
+      events[idx].location = document.getElementById("eventLocation").value;
+      events[idx].start = document.getElementById("startDate").value;
+      events[idx].end = document.getElementById("endDate").value;
+      localStorage.setItem("events", JSON.stringify(events));
+      window.location.href = "index.html";
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "triton-booking-platform",
+  "version": "1.0.0",
+  "description": "Expo booking tracker with Node.js backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Event Overview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#f5f5f5] text-[#323E48] font-sans">
+
+<header class="bg-white shadow p-4">
+  <div class="max-w-6xl mx-auto flex items-center gap-4">
+    <img alt="Triton Logo" class="h-10" src="logo.png"/>
+    <h1 class="text-2xl font-bold">Expo Booking Tracker</h1>
+  </div>
+</header>
+
+<main class="p-6 max-w-5xl mx-auto">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-semibold">Upcoming Events</h2>
+    <button class="bg-[#CF6528] text-white px-4 py-2 rounded hover:bg-[#954B2D]" onclick="toggleForm()">+ Add New Event</button>
+  </div>
+  <div class="hidden bg-white p-4 rounded shadow mb-6" id="eventForm">
+    <h3 class="text-lg font-semibold mb-2">Add New Event</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input class="border p-2 rounded" id="eventName" placeholder="Event Name"/>
+      <input class="border p-2 rounded" id="eventLocation" placeholder="Location"/>
+      <input class="border p-2 rounded" id="startDate" type="date"/>
+      <input class="border p-2 rounded" id="endDate" type="date"/>
+    </div>
+    <div class="text-right mt-4">
+      <button class="bg-[#CF6528] text-white px-4 py-2 rounded hover:bg-[#954B2D]" onclick="addEvent()">Save Event</button>
+    </div>
+  </div>
+  <div class="bg-white rounded shadow overflow-x-auto">
+    <table class="min-w-full table-auto" id="eventTable">
+      <thead class="bg-gray-200 text-left">
+        <tr>
+          <th class="px-4 py-2">Event Name</th>
+          <th class="px-4 py-2">Dates</th>
+          <th class="px-2 py-2">Location</th>
+          <th class="px-4 py-2 w-40 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="eventBody"></tbody>
+    </table>
+  </div>
+</main>
+<script>
+  function toggleForm() {
+    document.getElementById("eventForm").classList.toggle("hidden");
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split("-");
+    return `${month}/${day}/${year}`;
+  }
+
+  function loadEvents() {
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+    const tbody = document.getElementById("eventBody");
+    tbody.innerHTML = "";
+    events.forEach(ev => {
+      const row = document.createElement("tr");
+      row.classList.add("border-t");
+      row.innerHTML = `
+        <td class="px-4 py-2">${ev.name}</td>
+        <td class="px-4 py-2">${formatDate(ev.start)}–${formatDate(ev.end)}</td>
+        <td class="px-1 py-2">${ev.location}</td>
+        <td class="px-4 py-2 text-left">
+          <div class="flex flex-col items-start space-y-1">
+            <a href="bookings.html?eventId=${ev.id}" class="text-[#CF6528] hover:text-[#954B2D] underline">Manage</a>
+            <a href="edit_event.html?eventId=${ev.id}" class="text-[#CF6528] hover:text-[#954B2D] underline">Edit</a>
+            <button onclick="deleteEvent(${ev.id})" class="text-[#CF6528] hover:text-[#954B2D] underline">Delete</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  function addEvent() {
+    const name = document.getElementById("eventName").value.trim();
+    const location = document.getElementById("eventLocation").value.trim();
+    const start = document.getElementById("startDate").value;
+    const end = document.getElementById("endDate").value;
+    if (!name || !location || !start || !end) {
+      alert("Please fill out all fields.");
+      return;
+    }
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+    const id = Date.now();
+    events.push({ id, name, location, start, end });
+    localStorage.setItem("events", JSON.stringify(events));
+    toggleForm();
+    loadEvents();
+    document.getElementById("eventForm").reset();
+  }
+
+  function deleteEvent(id) {
+    if (!confirm("Delete this event?")) return;
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+    const updated = events.filter(ev => ev.id !== id);
+    localStorage.setItem("events", JSON.stringify(updated));
+    loadEvents();
+  }
+
+  window.onload = loadEvents;
+</script>
+</body>
+</html>

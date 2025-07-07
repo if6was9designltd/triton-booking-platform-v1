@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Edit Booking</title>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-[#323E48] font-sans">
+<header class="bg-white shadow p-4">
+<div class="max-w-6xl mx-auto flex items-center gap-4">
+<img alt="Triton Logo" class="h-10" src="logo.png"/>
+<h1 class="text-2xl font-bold">Edit Booking</h1>
+<div class="ml-auto"><a class="text-[#CF6528] hover:text-[#954B2D] text-sm" id="backLink">← Back to Bookings</a></div></div>
+</header>
+<main class="p-6 max-w-3xl mx-auto bg-white rounded shadow mt-6">
+<h2 class="text-xl font-semibold mb-4">Update Booking Details</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block mb-1 font-medium">Team Member</label>
+<input class="w-full border rounded p-2" id="editTeamMember" type="text"/>
+</div>
+<div>
+<label class="block mb-1 font-medium">Hotel</label>
+<input class="w-full border rounded p-2" id="editHotel" type="text"/>
+</div>
+<div>
+<label class="block mb-1 font-medium">Start Date</label>
+<input class="w-full border rounded p-2" id="editStartDate" type="date"/>
+</div>
+<div>
+<label class="block mb-1 font-medium">End Date</label>
+<input class="w-full border rounded p-2" id="editEndDate" type="date"/>
+</div>
+<div>
+<label class="block mb-1 font-medium">Status</label>
+<select class="w-full border rounded p-2" id="editStatus">
+<option>Booked</option>
+<option>Pending</option>
+<option>Cancelled</option>
+</select>
+</div>
+<div class="md:col-span-2">
+<label class="block mb-1 font-medium">Comments</label>
+<textarea class="w-full border rounded p-2 h-24 resize-y" id="editComments" placeholder="Flight info, arrival time, special requests…"></textarea>
+</div>
+</div>
+<div class="text-right mt-6">
+<button class="bg-[#CF6528] text-white px-4 py-2 rounded hover:bg-[#954B2D]" onclick="saveEdit()">Save Changes</button>
+</div>
+</main>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const eventId = params.get("eventId");
+  const bookingId = parseInt(params.get("bookingId"), 10);
+  const data = JSON.parse(localStorage.getItem("bookings_" + eventId)) || [];
+
+  if (data[bookingId]) {
+    document.getElementById("editTeamMember").value = data[bookingId].name;
+    document.getElementById("editHotel").value = data[bookingId].hotel;
+    document.getElementById("editStartDate").value = data[bookingId].startDate;
+    document.getElementById("editEndDate").value = data[bookingId].endDate;
+    document.getElementById("editStatus").value = data[bookingId].status;
+    document.getElementById("editComments").value = data[bookingId].comments;
+  }
+
+  function saveEdit() {
+    data[bookingId] = {
+      name: document.getElementById("editTeamMember").value,
+      hotel: document.getElementById("editHotel").value,
+      startDate: document.getElementById("editStartDate").value,
+      endDate: document.getElementById("editEndDate").value,
+      status: document.getElementById("editStatus").value,
+      comments: document.getElementById("editComments").value,
+    };
+    localStorage.setItem("bookings_" + eventId, JSON.stringify(data));
+    window.location.href = "bookings.html?eventId=" + eventId;
+  }
+</script>
+<script>
+      const params = new URLSearchParams(window.location.search);
+      const eventId = params.get("eventId");
+      if (eventId) {
+        document.getElementById("backLink").href = `bookings.html?eventId=${eventId}`;
+      }
+    </script></body>
+</html>
