@@ -75,9 +75,9 @@
   </main>
 
   <script>
-    const hotels = [];
-    const params = new URLSearchParams(window.location.search);
-    const eventId = params.get("eventId");
+    const eventId = new URLSearchParams(window.location.search).get("eventId");
+    const hotelsKey = "hotels_" + eventId;
+    let hotels = JSON.parse(localStorage.getItem(hotelsKey)) || [];
 
     function populateDropdown(id, items) {
       const select = document.getElementById(id);
@@ -94,6 +94,7 @@
       const hotel = input.value.trim();
       if (hotel && !hotels.includes(hotel)) {
         hotels.push(hotel);
+        localStorage.setItem(hotelsKey, JSON.stringify(hotels));
         populateDropdown("hotelSelect", hotels);
         document.getElementById("hotelSelect").value = hotel;
         input.value = "";
@@ -143,7 +144,7 @@
     }
 
     async function addBooking() {
-      const name = document.getElementById("teamMember").value;
+      const name = document.getElementById("teamMember").value.trim();
       const hotel = document.getElementById("hotelSelect").value;
       const start = document.getElementById("startDate").value;
       const end = document.getElementById("endDate").value;
@@ -151,7 +152,7 @@
       const comments = document.getElementById("comments").value;
 
       if (!name || !hotel || !start || !end) {
-        alert("Please fill in all required fields.");
+        alert("Please fill in all required fields including selecting or adding a hotel.");
         return;
       }
 
@@ -161,11 +162,13 @@
         body: JSON.stringify({ name, hotel, startDate: start, endDate: end, status, comments })
       });
 
+      // Clear form
       document.getElementById("teamMember").value = "";
       document.getElementById("startDate").value = "";
       document.getElementById("endDate").value = "";
       document.getElementById("comments").value = "";
 
+      // Refresh table
       loadBookings();
     }
 
@@ -176,3 +179,4 @@
   </script>
 </body>
 </html>
+
